@@ -144,9 +144,15 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* Professional background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-600/20 to-blue-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animate-float"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000 animate-float-delayed"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-600/20 to-blue-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000 animate-float-slow"></div>
+        
+        {/* Animated particles */}
+        <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-blue-400/60 rounded-full animate-ping animation-delay-1000"></div>
+        <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-purple-400/60 rounded-full animate-ping animation-delay-3000"></div>
+        <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-pink-400/60 rounded-full animate-ping animation-delay-5000"></div>
+        <div className="absolute bottom-1/4 left-2/3 w-2 h-2 bg-cyan-400/60 rounded-full animate-ping animation-delay-7000"></div>
         
         {/* Grid pattern overlay */}
         <div className={`absolute inset-0 bg-[url('${gridPatternUrl}')] opacity-40`}></div>
@@ -157,10 +163,10 @@ function App() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-white">AI Studio</h1>
+              <h1 className="text-xl font-bold text-white animate-fade-in">AI Studio</h1>
             </div>
             <div className="flex space-x-6">
               <button
@@ -194,24 +200,24 @@ function App() {
             {/* Header */}
             <div className="text-center mb-16">
               <div className="flex justify-center items-center mb-8">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl animate-bounce hover:animate-pulse transition-all duration-500 transform hover:scale-110">
                   <Wand2 className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Professional AI Image Generator
+              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up">
+                AI Image Generator
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                Create stunning, professional-quality images with advanced AI technology and artistic precision
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500">
+                Create stunning, high-quality images with advanced AI technology and artistic precision
               </p>
             </div>
 
             {/* Main Content */}
             <div className="max-w-4xl mx-auto">
               {/* Input Section */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 mb-8 border border-white/10 shadow-2xl">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 mb-8 border border-white/10 shadow-2xl animate-slide-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
                 <div className="mb-6">
-                  <label htmlFor="prompt" className="block text-lg font-semibold text-white mb-4 flex items-center gap-3">
+                  <label htmlFor="prompt" className="block text-lg font-semibold text-white mb-4 flex items-center gap-3 animate-fade-in">
                     <Palette className="w-5 h-5" />
                     Describe Your Vision
                   </label>
@@ -221,14 +227,14 @@ function App() {
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="A serene mountain landscape at golden hour with misty valleys..."
-                    className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none h-32 backdrop-blur-sm"
+                    className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none h-32 backdrop-blur-sm hover:bg-white/10 focus:scale-[1.02] transform"
                     disabled={isGenerating}
                   />
                 </div>
 
                 {/* Style Selection */}
                 <div className="mb-6">
-                  <label className="block text-lg font-semibold text-white mb-4 flex items-center gap-3">
+                  <label className="block text-lg font-semibold text-white mb-4 flex items-center gap-3 animate-fade-in animation-delay-200">
                     <Layers className="w-5 h-5" />
                     Art Style (Optional)
                   </label>
@@ -236,7 +242,7 @@ function App() {
                   <div className="relative">
                     <button
                       onClick={() => setIsStyleDropdownOpen(!isStyleDropdownOpen)}
-                      className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm"
+                      className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm transform hover:scale-[1.02] focus:scale-[1.02]"
                       disabled={isGenerating}
                     >
                       <span className={selectedStyle ? 'text-white' : 'text-gray-400'}>
@@ -259,7 +265,7 @@ function App() {
                     </button>
 
                     {isStyleDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down">
                         {styleCategories.map((category, categoryIndex) => (
                           <div key={categoryIndex} className="p-4 border-b border-white/10 last:border-b-0">
                             <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3">
@@ -271,7 +277,7 @@ function App() {
                                 <button
                                   key={styleIndex}
                                   onClick={() => selectStyle(style)}
-                                  className="p-3 text-left text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm"
+                                  className="p-3 text-left text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm transform hover:scale-105 hover:translate-x-1"
                                 >
                                   {style}
                                 </button>
@@ -285,7 +291,7 @@ function App() {
                 </div>
 
                 {error && (
-                  <div className="mb-6 p-4 bg-red-500/10 border border-red-400/20 rounded-xl text-red-300 backdrop-blur-sm">
+                  <div className="mb-6 p-4 bg-red-500/10 border border-red-400/20 rounded-xl text-red-300 backdrop-blur-sm animate-shake">
                     {error}
                   </div>
                 )}
@@ -294,7 +300,7 @@ function App() {
                   <button
                     onClick={generateImage}
                     disabled={isGenerating || !prompt.trim()}
-                    className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none animate-pulse-slow hover:animate-none"
                   >
                     {isGenerating ? (
                       <>
@@ -313,7 +319,7 @@ function App() {
                     <button
                       onClick={regenerateImage}
                       disabled={isGenerating}
-                      className="flex items-center gap-3 px-6 py-4 bg-white/10 text-white rounded-xl font-semibold border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
+                      className="flex items-center gap-3 px-6 py-4 bg-white/10 text-white rounded-xl font-semibold border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm hover:rotate-180"
                     >
                       <RefreshCw className={`w-5 h-5 ${isGenerating ? 'animate-spin' : ''}`} />
                       Regenerate
@@ -340,13 +346,13 @@ function App() {
                           <img
                             src={image.url}
                             alt={image.prompt}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1"
                             onClick={() => setCurrentImageIndex(index)}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 animate-gradient"></div>
                           
                           {/* Style badge */}
-                          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium">
+                          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium transform group-hover:scale-110 transition-transform duration-300 animate-fade-in">
                             {image.style}
                           </div>
                         </div>
@@ -359,7 +365,7 @@ function App() {
                           <div className="flex items-center justify-between gap-3">
                             <button
                               onClick={() => copyPrompt(image.prompt)}
-                              className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+                              className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition-all duration-300 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-1"
                             >
                               <Copy className="w-4 h-4" />
                               Copy
@@ -367,7 +373,7 @@ function App() {
                             
                             <button
                               onClick={() => downloadImage(image.url, image.prompt, image.style)}
-                              className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                              className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:shadow-lg transform hover:scale-105 transition-all duration-300 hover:-translate-y-1 hover:rotate-3"
                             >
                               <Download className="w-4 h-4" />
                               Download
@@ -382,12 +388,12 @@ function App() {
 
               {/* Empty State */}
               {generatedImages.length === 0 && !isGenerating && (
-                <div className="text-center py-16">
-                  <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 border border-white/10 backdrop-blur-sm">
+                <div className="text-center py-16 animate-fade-in">
+                  <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 border border-white/10 backdrop-blur-sm animate-bounce hover:animate-spin transition-all duration-500">
                     <Sparkles className="w-12 h-12 text-blue-400" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-white mb-4">Ready to Create?</h3>
-                  <p className="text-gray-300 text-lg max-w-md mx-auto leading-relaxed">
+                  <h3 className="text-2xl font-semibold text-white mb-4 animate-fade-in-up">Ready to Create?</h3>
+                  <p className="text-gray-300 text-lg max-w-md mx-auto leading-relaxed animate-fade-in-up animation-delay-300">
                     Enter your creative prompt and let AI transform your ideas into stunning visuals
                   </p>
                 </div>
@@ -399,23 +405,23 @@ function App() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <div className="flex justify-center items-center mb-8">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl animate-bounce hover:animate-pulse transition-all duration-500 transform hover:scale-110">
                   <User className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up">
                 About AI Studio
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500">
                 Crafted with passion for innovation and excellence in AI-powered creativity
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
               {/* Developer Info */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-left hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
                     <Code className="w-6 h-6 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white">Developer</h2>
@@ -447,9 +453,9 @@ function App() {
               </div>
 
               {/* Project Info */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-right hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white">Project Features</h2>
@@ -475,7 +481,7 @@ function App() {
                   <div className="flex items-start gap-3">
                     <Star className="w-5 h-5 text-yellow-400 mt-0.5" />
                     <div>
-                      <h3 className="text-white font-semibold">Professional UI/UX</h3>
+                      <h3 className="text-white font-semibold">Modern UI/UX</h3>
                       <p className="text-gray-300 text-sm">Modern, responsive design with smooth animations</p>
                     </div>
                   </div>
@@ -492,9 +498,9 @@ function App() {
             </div>
 
             {/* Technology Stack */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-fade-in-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
               <div className="flex items-center gap-4 mb-6">
-                <div className="bg-gradient-to-r from-green-500 to-blue-600 p-3 rounded-xl">
+                <div className="bg-gradient-to-r from-green-500 to-blue-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
                   <Layers className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-white">Technology Stack</h2>
@@ -513,7 +519,8 @@ function App() {
                 ].map((tech, index) => (
                   <div
                     key={index}
-                    className={`bg-gradient-to-r ${tech.color} p-3 rounded-xl text-white text-center font-semibold text-sm transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl`}
+                    className={`bg-gradient-to-r ${tech.color} p-3 rounded-xl text-white text-center font-semibold text-sm transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-fade-in hover:rotate-3 hover:-translate-y-1`}
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
                     {tech.name}
                   </div>
@@ -523,14 +530,14 @@ function App() {
 
             {/* Contact CTA */}
             <div className="text-center mt-12">
-              <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-8 border border-white/10 backdrop-blur-xl">
+              <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-8 border border-white/10 backdrop-blur-xl animate-fade-in-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
                 <h3 className="text-2xl font-bold text-white mb-4">Let's Connect</h3>
                 <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
                   Interested in collaborating or have questions about this project? Feel free to reach out!
                 </p>
                 <a
                   href="mailto:vrajsondagar@gmail.com"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-pulse-slow hover:animate-none hover:-translate-y-2"
                 >
                   <Mail className="w-5 h-5" />
                   Get In Touch
@@ -543,8 +550,89 @@ function App() {
 
       <style jsx>{`
         .animation-delay-200 { animation-delay: 0.2s; }
+        .animation-delay-300 { animation-delay: 0.3s; }
+        .animation-delay-500 { animation-delay: 0.5s; }
+        .animation-delay-1000 { animation-delay: 1s; }
         .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-3000 { animation-delay: 3s; }
         .animation-delay-4000 { animation-delay: 4s; }
+        .animation-delay-5000 { animation-delay: 5s; }
+        .animation-delay-7000 { animation-delay: 7s; }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes float-delayed {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(50px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slide-down {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slide-left {
+          from { opacity: 0; transform: translateX(-50px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slide-right {
+          from { opacity: 0; transform: translateX(50px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
+        .animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
+        .animate-fade-in { animation: fade-in 1s ease-out; }
+        .animate-fade-in-up { animation: fade-in-up 1s ease-out; }
+        .animate-slide-up { animation: slide-up 0.8s ease-out; }
+        .animate-slide-down { animation: slide-down 0.3s ease-out; }
+        .animate-slide-left { animation: slide-left 0.8s ease-out; }
+        .animate-slide-right { animation: slide-right 0.8s ease-out; }
+        .animate-shake { animation: shake 0.5s ease-in-out; }
+        .animate-gradient { animation: gradient 3s ease infinite; }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
         
         .line-clamp-2 {
           display: -webkit-box;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, Sparkles, RefreshCw, Copy, Zap, Palette, Wand2, Camera, Brush, Brain, Globe, ChevronDown, X, User, Mail, Star, Award, Layers, Code } from 'lucide-react';
 
 interface GeneratedImage {
@@ -47,6 +48,18 @@ function App() {
   const [error, setError] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState('generator');
+  const [scrollY, setScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    const handleVisibility = () => setIsVisible(true);
+    
+    window.addEventListener('scroll', handleScroll);
+    setTimeout(handleVisibility, 100);
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const webhookUrl = 'https://n8n-latest-ug73.onrender.com/webhook/7aaaa7bd-25a4-4ad6-ba32-6f9ec0832852';
 
@@ -141,39 +154,53 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden animate-gradient-shift">
       {/* Professional background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animate-float"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000 animate-float-delayed"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-600/20 to-blue-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000 animate-float-slow"></div>
+        <div 
+          className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animate-float animate-morph"
+          style={{ transform: `translateY(${scrollY * 0.1}px) rotate(${scrollY * 0.05}deg)` }}
+        ></div>
+        <div 
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000 animate-float-delayed animate-morph-delayed"
+          style={{ transform: `translateY(${scrollY * -0.15}px) rotate(${scrollY * -0.03}deg)` }}
+        ></div>
+        <div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-600/20 to-blue-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000 animate-float-slow animate-morph-slow"
+          style={{ transform: `translate(-50%, -50%) translateY(${scrollY * 0.08}px) scale(${1 + scrollY * 0.0001})` }}
+        ></div>
         
         {/* Animated particles */}
-        <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-blue-400/60 rounded-full animate-ping animation-delay-1000"></div>
-        <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-purple-400/60 rounded-full animate-ping animation-delay-3000"></div>
-        <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-pink-400/60 rounded-full animate-ping animation-delay-5000"></div>
-        <div className="absolute bottom-1/4 left-2/3 w-2 h-2 bg-cyan-400/60 rounded-full animate-ping animation-delay-7000"></div>
+        <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-blue-400/60 rounded-full animate-ping animation-delay-1000 animate-drift"></div>
+        <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-purple-400/60 rounded-full animate-ping animation-delay-3000 animate-drift-reverse"></div>
+        <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-pink-400/60 rounded-full animate-ping animation-delay-5000 animate-drift-slow"></div>
+        <div className="absolute bottom-1/4 left-2/3 w-2 h-2 bg-cyan-400/60 rounded-full animate-ping animation-delay-7000 animate-drift-fast"></div>
+        <div className="absolute top-1/6 right-1/4 w-1 h-1 bg-yellow-400/60 rounded-full animate-ping animation-delay-2000 animate-drift-diagonal"></div>
+        <div className="absolute bottom-1/3 right-1/6 w-2 h-2 bg-green-400/60 rounded-full animate-ping animation-delay-6000 animate-drift-circular"></div>
         
         {/* Grid pattern overlay */}
-        <div className={`absolute inset-0 bg-[url('${gridPatternUrl}')] opacity-40`}></div>
+        <div 
+          className={`absolute inset-0 bg-[url('${gridPatternUrl}')] opacity-40 animate-grid-shift`}
+          style={{ transform: `translateX(${scrollY * 0.02}px) translateY(${scrollY * 0.01}px)` }}
+        ></div>
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-20 bg-white/5 backdrop-blur-xl border-b border-white/10">
+      <nav className={`relative z-20 bg-white/5 backdrop-blur-xl border-b border-white/10 transition-all duration-500 ${scrollY > 50 ? 'bg-white/10 shadow-2xl' : ''} animate-slide-down`}>
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between animate-fade-in">
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl animate-pulse hover:animate-spin transition-all duration-300 animate-glow hover:animate-bounce">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-white animate-fade-in">AI Studio</h1>
+              <h1 className="text-xl font-bold text-white animate-fade-in animate-text-shimmer">AI Studio</h1>
             </div>
             <div className="flex space-x-6">
               <button
                 onClick={() => setActiveSection('generator')}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 animate-slide-in-right ${
                   activeSection === 'generator'
-                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 animate-glow-blue'
                     : 'text-gray-300 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -181,9 +208,9 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveSection('about')}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 animate-slide-in-right animation-delay-200 ${
                   activeSection === 'about'
-                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 animate-glow-blue'
                     : 'text-gray-300 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -198,26 +225,26 @@ function App() {
         {activeSection === 'generator' ? (
           <>
             {/* Header */}
-            <div className="text-center mb-16">
+            <div className={`text-center mb-16 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
               <div className="flex justify-center items-center mb-8">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl animate-bounce hover:animate-pulse transition-all duration-500 transform hover:scale-110">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl animate-bounce hover:animate-pulse transition-all duration-500 transform hover:scale-110 animate-glow animate-rotate-slow">
                   <Wand2 className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up">
+              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up animate-text-shimmer animate-scale-in">
                 AI Image Generator
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500 animate-typewriter">
                 Create stunning, high-quality images with advanced AI technology and artistic precision
               </p>
             </div>
 
             {/* Main Content */}
-            <div className="max-w-4xl mx-auto">
+            <div className={`max-w-4xl mx-auto ${isVisible ? 'animate-slide-up' : 'opacity-0 translate-y-10'}`}>
               {/* Input Section */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 mb-8 border border-white/10 shadow-2xl animate-slide-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 mb-8 border border-white/10 shadow-2xl animate-slide-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] animate-border-glow hover:animate-float-gentle">
                 <div className="mb-6">
-                  <label htmlFor="prompt" className="block text-lg font-semibold text-white mb-4 flex items-center gap-3 animate-fade-in">
+                  <label htmlFor="prompt" className="block text-lg font-semibold text-white mb-4 flex items-center gap-3 animate-fade-in animate-slide-in-left">
                     <Palette className="w-5 h-5" />
                     Describe Your Vision
                   </label>
@@ -227,14 +254,14 @@ function App() {
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="A serene mountain landscape at golden hour with misty valleys..."
-                    className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none h-32 backdrop-blur-sm hover:bg-white/10 focus:scale-[1.02] transform"
+                    className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none h-32 backdrop-blur-sm hover:bg-white/10 focus:scale-[1.02] transform animate-border-pulse focus:animate-glow-blue hover:animate-subtle-bounce"
                     disabled={isGenerating}
                   />
                 </div>
 
                 {/* Style Selection */}
                 <div className="mb-6">
-                  <label className="block text-lg font-semibold text-white mb-4 flex items-center gap-3 animate-fade-in animation-delay-200">
+                  <label className="block text-lg font-semibold text-white mb-4 flex items-center gap-3 animate-fade-in animation-delay-200 animate-slide-in-left animation-delay-300">
                     <Layers className="w-5 h-5" />
                     Art Style (Optional)
                   </label>
@@ -242,7 +269,7 @@ function App() {
                   <div className="relative">
                     <button
                       onClick={() => setIsStyleDropdownOpen(!isStyleDropdownOpen)}
-                      className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm transform hover:scale-[1.02] focus:scale-[1.02]"
+                      className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm transform hover:scale-[1.02] focus:scale-[1.02] animate-border-pulse hover:animate-subtle-bounce focus:animate-glow-blue"
                       disabled={isGenerating}
                     >
                       <span className={selectedStyle ? 'text-white' : 'text-gray-400'}>
@@ -265,10 +292,10 @@ function App() {
                     </button>
 
                     {isStyleDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in animate-border-glow">
                         {styleCategories.map((category, categoryIndex) => (
-                          <div key={categoryIndex} className="p-4 border-b border-white/10 last:border-b-0">
-                            <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3">
+                          <div key={categoryIndex} className="p-4 border-b border-white/10 last:border-b-0 animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
+                            <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3 animate-slide-in-left">
                               {category.icon}
                               <span className="text-sm">{category.name}</span>
                             </div>
@@ -277,7 +304,8 @@ function App() {
                                 <button
                                   key={styleIndex}
                                   onClick={() => selectStyle(style)}
-                                  className="p-3 text-left text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm transform hover:scale-105 hover:translate-x-1"
+                                  className="p-3 text-left text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm transform hover:scale-105 hover:translate-x-1 animate-fade-in hover:animate-glow-subtle animate-slide-in-right"
+                                  style={{ animationDelay: `${(categoryIndex * 10 + styleIndex) * 50}ms` }}
                                 >
                                   {style}
                                 </button>
@@ -300,16 +328,16 @@ function App() {
                   <button
                     onClick={generateImage}
                     disabled={isGenerating || !prompt.trim()}
-                    className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none animate-pulse-slow hover:animate-none"
+                    className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none animate-pulse-slow hover:animate-none animate-glow hover:animate-bounce-gentle animate-gradient-shift"
                   >
                     {isGenerating ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin animate-pulse"></div>
                         Generating...
                       </>
                     ) : (
                       <>
-                        <Zap className="w-5 h-5" />
+                        <Zap className="w-5 h-5 animate-pulse" />
                         Generate Image
                       </>
                     )}
@@ -319,9 +347,9 @@ function App() {
                     <button
                       onClick={regenerateImage}
                       disabled={isGenerating}
-                      className="flex items-center gap-3 px-6 py-4 bg-white/10 text-white rounded-xl font-semibold border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm hover:rotate-180"
+                      className="flex items-center gap-3 px-6 py-4 bg-white/10 text-white rounded-xl font-semibold border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm hover:rotate-180 animate-slide-in-right animate-border-pulse hover:animate-glow-subtle"
                     >
-                      <RefreshCw className={`w-5 h-5 ${isGenerating ? 'animate-spin' : ''}`} />
+                      <RefreshCw className={`w-5 h-5 ${isGenerating ? 'animate-spin animate-pulse' : 'animate-rotate-slow'}`} />
                       Regenerate
                     </button>
                   )}
@@ -330,8 +358,8 @@ function App() {
 
               {/* Generated Images Gallery */}
               {generatedImages.length > 0 && (
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
-                  <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-up animation-delay-500 animate-border-glow hover:animate-float-gentle">
+                  <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 animate-fade-in-up animate-text-shimmer">
                     <Award className="w-6 h-6 text-blue-400" />
                     Generated Images
                   </h2>
@@ -340,42 +368,43 @@ function App() {
                     {generatedImages.map((image, index) => (
                       <div
                         key={image.id}
-                        className="group relative bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                        className="group relative bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl animate-fade-in animate-scale-in hover:animate-glow-subtle animate-border-pulse"
+                        style={{ animationDelay: `${index * 200}ms` }}
                       >
-                        <div className="aspect-square relative overflow-hidden">
+                        <div className="aspect-square relative overflow-hidden animate-shimmer">
                           <img
                             src={image.url}
                             alt={image.prompt}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1 animate-fade-in hover:animate-subtle-zoom"
                             onClick={() => setCurrentImageIndex(index)}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 animate-gradient"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 animate-gradient animate-shimmer-overlay"></div>
                           
                           {/* Style badge */}
-                          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium transform group-hover:scale-110 transition-transform duration-300 animate-fade-in">
+                          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium transform group-hover:scale-110 transition-transform duration-300 animate-fade-in animate-slide-in-left animate-glow-subtle">
                             {image.style}
                           </div>
                         </div>
 
-                        <div className="p-4">
-                          <p className="text-sm text-gray-300 mb-4 line-clamp-2 leading-relaxed">
+                        <div className="p-4 animate-slide-in-up animation-delay-300">
+                          <p className="text-sm text-gray-300 mb-4 line-clamp-2 leading-relaxed animate-fade-in animation-delay-400">
                             {image.prompt}
                           </p>
                           
                           <div className="flex items-center justify-between gap-3">
                             <button
                               onClick={() => copyPrompt(image.prompt)}
-                              className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition-all duration-300 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-1"
+                              className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition-all duration-300 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-1 animate-slide-in-left animation-delay-500 hover:animate-bounce-gentle animate-border-pulse"
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className="w-4 h-4 animate-pulse" />
                               Copy
                             </button>
                             
                             <button
                               onClick={() => downloadImage(image.url, image.prompt, image.style)}
-                              className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:shadow-lg transform hover:scale-105 transition-all duration-300 hover:-translate-y-1 hover:rotate-3"
+                              className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:shadow-lg transform hover:scale-105 transition-all duration-300 hover:-translate-y-1 hover:rotate-3 animate-slide-in-right animation-delay-500 hover:animate-bounce-gentle animate-glow animate-gradient-shift"
                             >
-                              <Download className="w-4 h-4" />
+                              <Download className="w-4 h-4 animate-pulse" />
                               Download
                             </button>
                           </div>
@@ -388,12 +417,12 @@ function App() {
 
               {/* Empty State */}
               {generatedImages.length === 0 && !isGenerating && (
-                <div className="text-center py-16 animate-fade-in">
-                  <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 border border-white/10 backdrop-blur-sm animate-bounce hover:animate-spin transition-all duration-500">
-                    <Sparkles className="w-12 h-12 text-blue-400" />
+                <div className="text-center py-16 animate-fade-in animate-scale-in">
+                  <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 border border-white/10 backdrop-blur-sm animate-bounce hover:animate-spin transition-all duration-500 animate-glow animate-morph">
+                    <Sparkles className="w-12 h-12 text-blue-400 animate-pulse animate-rotate-slow" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-white mb-4 animate-fade-in-up">Ready to Create?</h3>
-                  <p className="text-gray-300 text-lg max-w-md mx-auto leading-relaxed animate-fade-in-up animation-delay-300">
+                  <h3 className="text-2xl font-semibold text-white mb-4 animate-fade-in-up animate-text-shimmer">Ready to Create?</h3>
+                  <p className="text-gray-300 text-lg max-w-md mx-auto leading-relaxed animate-fade-in-up animation-delay-300 animate-typewriter">
                     Enter your creative prompt and let AI transform your ideas into stunning visuals
                   </p>
                 </div>
@@ -402,17 +431,17 @@ function App() {
           </>
         ) : (
           /* About Section */
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
+          <div className={`max-w-4xl mx-auto ${isVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}>
+            <div className="text-center mb-16 animate-scale-in">
               <div className="flex justify-center items-center mb-8">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl animate-bounce hover:animate-pulse transition-all duration-500 transform hover:scale-110">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-2xl shadow-2xl animate-bounce hover:animate-pulse transition-all duration-500 transform hover:scale-110 animate-glow animate-rotate-slow">
                   <User className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up">
+              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up animate-text-shimmer animate-scale-in">
                 About AI Studio
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500 animate-typewriter">
                 Crafted with passion for innovation and excellence in AI-powered creativity
               </p>
             </div>
@@ -453,16 +482,16 @@ function App() {
               </div>
 
               {/* Project Info */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-right hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-right hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] animate-border-glow hover:animate-float-gentle">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300 animate-glow">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white">Project Features</h2>
+                  <h2 className="text-2xl font-bold text-white animate-slide-in-left animate-text-shimmer">Project Features</h2>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
+                <div className="space-y-4 animate-fade-in animation-delay-300">
+                  <div className="flex items-start gap-3 animate-slide-in-right animation-delay-400">
                     <Star className="w-5 h-5 text-yellow-400 mt-0.5" />
                     <div>
                       <h3 className="text-white font-semibold">AI-Powered Generation</h3>
@@ -470,7 +499,7 @@ function App() {
                     </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 animate-slide-in-right animation-delay-500">
                     <Star className="w-5 h-5 text-yellow-400 mt-0.5" />
                     <div>
                       <h3 className="text-white font-semibold">Multiple Art Styles</h3>
@@ -478,7 +507,7 @@ function App() {
                     </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 animate-slide-in-right animation-delay-600">
                     <Star className="w-5 h-5 text-yellow-400 mt-0.5" />
                     <div>
                       <h3 className="text-white font-semibold">Modern UI/UX</h3>
@@ -486,7 +515,7 @@ function App() {
                     </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 animate-slide-in-right animation-delay-700">
                     <Star className="w-5 h-5 text-yellow-400 mt-0.5" />
                     <div>
                       <h3 className="text-white font-semibold">n8n Integration</h3>
@@ -498,12 +527,12 @@ function App() {
             </div>
 
             {/* Technology Stack */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-fade-in-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-fade-in-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] animate-border-glow hover:animate-float-gentle">
               <div className="flex items-center gap-4 mb-6">
-                <div className="bg-gradient-to-r from-green-500 to-blue-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300">
+                <div className="bg-gradient-to-r from-green-500 to-blue-600 p-3 rounded-xl animate-pulse hover:animate-spin transition-all duration-300 animate-glow">
                   <Layers className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Technology Stack</h2>
+                <h2 className="text-2xl font-bold text-white animate-slide-in-right animate-text-shimmer">Technology Stack</h2>
               </div>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -519,7 +548,7 @@ function App() {
                 ].map((tech, index) => (
                   <div
                     key={index}
-                    className={`bg-gradient-to-r ${tech.color} p-3 rounded-xl text-white text-center font-semibold text-sm transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-fade-in hover:rotate-3 hover:-translate-y-1`}
+                    className={`bg-gradient-to-r ${tech.color} p-3 rounded-xl text-white text-center font-semibold text-sm transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-fade-in hover:rotate-3 hover:-translate-y-1 animate-scale-in hover:animate-bounce-gentle animate-glow-subtle animate-gradient-shift`}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     {tech.name}
@@ -530,16 +559,16 @@ function App() {
 
             {/* Contact CTA */}
             <div className="text-center mt-12">
-              <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-8 border border-white/10 backdrop-blur-xl animate-fade-in-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
-                <h3 className="text-2xl font-bold text-white mb-4">Let's Connect</h3>
-                <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-8 border border-white/10 backdrop-blur-xl animate-fade-in-up hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] animate-border-glow hover:animate-float-gentle">
+                <h3 className="text-2xl font-bold text-white mb-4 animate-text-shimmer animate-scale-in">Let's Connect</h3>
+                <p className="text-gray-300 mb-6 max-w-2xl mx-auto animate-typewriter animation-delay-300">
                   Interested in collaborating or have questions about this project? Feel free to reach out!
                 </p>
                 <a
                   href="mailto:vrajsondagar@gmail.com"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-pulse-slow hover:animate-none hover:-translate-y-2"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-pulse-slow hover:animate-none hover:-translate-y-2 animate-glow hover:animate-bounce-gentle animate-gradient-shift"
                 >
-                  <Mail className="w-5 h-5" />
+                  <Mail className="w-5 h-5 animate-pulse" />
                   Get In Touch
                 </a>
               </div>
@@ -549,7 +578,13 @@ function App() {
       </div>
 
       <style jsx>{`
+        /* Animation Delays */
         .animation-delay-200 { animation-delay: 0.2s; }
+        .animation-delay-300 { animation-delay: 0.3s; }
+        .animation-delay-400 { animation-delay: 0.4s; }
+        .animation-delay-500 { animation-delay: 0.5s; }
+        .animation-delay-600 { animation-delay: 0.6s; }
+        .animation-delay-700 { animation-delay: 0.7s; }
         .animation-delay-300 { animation-delay: 0.3s; }
         .animation-delay-500 { animation-delay: 0.5s; }
         .animation-delay-1000 { animation-delay: 1s; }
@@ -559,6 +594,7 @@ function App() {
         .animation-delay-5000 { animation-delay: 5s; }
         .animation-delay-7000 { animation-delay: 7s; }
         
+        /* Floating Animations */
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-20px); }
@@ -574,6 +610,12 @@ function App() {
           50% { transform: translateY(-10px); }
         }
         
+        @keyframes float-gentle {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        /* Fade Animations */
         @keyframes fade-in {
           from { opacity: 0; }
           to { opacity: 1; }
@@ -584,6 +626,7 @@ function App() {
           to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Slide Animations */
         @keyframes slide-up {
           from { opacity: 0; transform: translateY(50px); }
           to { opacity: 1; transform: translateY(0); }
@@ -604,36 +647,263 @@ function App() {
           to { opacity: 1; transform: translateX(0); }
         }
         
+        @keyframes slide-in-left {
+          from { opacity: 0; transform: translateX(-30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slide-in-right {
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slide-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scale Animations */
+        @keyframes scale-in {
+          from { opacity: 0; transform: scale(0.8); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Rotation Animations */
+        @keyframes rotate-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        /* Morphing Animations */
+        @keyframes morph {
+          0%, 100% { border-radius: 50%; }
+          25% { border-radius: 40% 60% 70% 30%; }
+          50% { border-radius: 60% 40% 30% 70%; }
+          75% { border-radius: 30% 70% 40% 60%; }
+        }
+        
+        @keyframes morph-delayed {
+          0%, 100% { border-radius: 60% 40% 30% 70%; }
+          25% { border-radius: 30% 70% 40% 60%; }
+          50% { border-radius: 50%; }
+          75% { border-radius: 40% 60% 70% 30%; }
+        }
+        
+        @keyframes morph-slow {
+          0%, 100% { border-radius: 30% 70% 40% 60%; }
+          33% { border-radius: 50%; }
+          66% { border-radius: 40% 60% 70% 30%; }
+        }
+        
+        /* Drift Animations */
+        @keyframes drift {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(10px, -10px); }
+          50% { transform: translate(-5px, -20px); }
+          75% { transform: translate(-10px, -5px); }
+        }
+        
+        @keyframes drift-reverse {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(-10px, 10px); }
+          50% { transform: translate(5px, 20px); }
+          75% { transform: translate(10px, 5px); }
+        }
+        
+        @keyframes drift-slow {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(5px, -5px); }
+        }
+        
+        @keyframes drift-fast {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(15px, -15px); }
+          50% { transform: translate(-10px, -25px); }
+          75% { transform: translate(-15px, -10px); }
+        }
+        
+        @keyframes drift-diagonal {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(20px, -20px); }
+        }
+        
+        @keyframes drift-circular {
+          0% { transform: translate(0, 0); }
+          25% { transform: translate(10px, -10px); }
+          50% { transform: translate(0, -20px); }
+          75% { transform: translate(-10px, -10px); }
+          100% { transform: translate(0, 0); }
+        }
+        
+        /* Glow Animations */
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(147, 51, 234, 0.5); }
+        }
+        
+        @keyframes glow-blue {
+          0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+          50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+        }
+        
+        @keyframes glow-subtle {
+          0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
+          50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+        }
+        
+        /* Border Animations */
+        @keyframes border-glow {
+          0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+          50% { border-color: rgba(59, 130, 246, 0.3); }
+        }
+        
+        @keyframes border-pulse {
+          0%, 100% { border-color: rgba(255, 255, 255, 0.2); }
+          50% { border-color: rgba(147, 51, 234, 0.4); }
+        }
+        
+        /* Text Animations */
+        @keyframes text-shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        
+        @keyframes typewriter {
+          from { width: 0; }
+          to { width: 100%; }
+        }
+        
+        /* Background Animations */
+        @keyframes gradient-shift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes grid-shift {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(10px, 5px); }
+        }
+        
+        /* Shimmer Animations */
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
+        
+        @keyframes shimmer-overlay {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.1; }
+        }
+        
+        /* Bounce Animations */
+        @keyframes bounce-gentle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes subtle-bounce {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.02); }
+        }
+        
+        @keyframes subtle-zoom {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        
+        /* Error Animations */
+        @keyframes pulse-error {
+          0%, 100% { background-color: rgba(239, 68, 68, 0.1); }
+          50% { background-color: rgba(239, 68, 68, 0.2); }
+        }
+        
+        /* Shake Animation */
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
           25% { transform: translateX(-5px); }
           75% { transform: translateX(5px); }
         }
         
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        
+        /* Pulse Animations */
         @keyframes pulse-slow {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.7; }
         }
         
+        /* Animation Classes */
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
         .animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
+        .animate-float-gentle { animation: float-gentle 4s ease-in-out infinite; }
+        
         .animate-fade-in { animation: fade-in 1s ease-out; }
         .animate-fade-in-up { animation: fade-in-up 1s ease-out; }
+        
         .animate-slide-up { animation: slide-up 0.8s ease-out; }
         .animate-slide-down { animation: slide-down 0.3s ease-out; }
         .animate-slide-left { animation: slide-left 0.8s ease-out; }
         .animate-slide-right { animation: slide-right 0.8s ease-out; }
+        .animate-slide-in-left { animation: slide-in-left 0.6s ease-out; }
+        .animate-slide-in-right { animation: slide-in-right 0.6s ease-out; }
+        .animate-slide-in-up { animation: slide-in-up 0.6s ease-out; }
+        
+        .animate-scale-in { animation: scale-in 0.8s ease-out; }
+        .animate-rotate-slow { animation: rotate-slow 20s linear infinite; }
+        
+        .animate-morph { animation: morph 8s ease-in-out infinite; }
+        .animate-morph-delayed { animation: morph-delayed 10s ease-in-out infinite; }
+        .animate-morph-slow { animation: morph-slow 12s ease-in-out infinite; }
+        
+        .animate-drift { animation: drift 6s ease-in-out infinite; }
+        .animate-drift-reverse { animation: drift-reverse 7s ease-in-out infinite; }
+        .animate-drift-slow { animation: drift-slow 8s ease-in-out infinite; }
+        .animate-drift-fast { animation: drift-fast 4s ease-in-out infinite; }
+        .animate-drift-diagonal { animation: drift-diagonal 5s ease-in-out infinite; }
+        .animate-drift-circular { animation: drift-circular 6s ease-in-out infinite; }
+        
+        .animate-glow { animation: glow 3s ease-in-out infinite; }
+        .animate-glow-blue { animation: glow-blue 2s ease-in-out infinite; }
+        .animate-glow-subtle { animation: glow-subtle 4s ease-in-out infinite; }
+        
+        .animate-border-glow { animation: border-glow 3s ease-in-out infinite; }
+        .animate-border-pulse { animation: border-pulse 2s ease-in-out infinite; }
+        
+        .animate-text-shimmer { 
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          background-size: 200% 100%;
+          animation: text-shimmer 3s ease-in-out infinite;
+        }
+        
+        .animate-typewriter { 
+          overflow: hidden;
+          white-space: nowrap;
+          animation: typewriter 2s steps(40, end);
+        }
+        
+        .animate-gradient-shift { 
+          background-size: 200% 200%;
+          animation: gradient-shift 8s ease infinite;
+        }
+        
+        .animate-grid-shift { animation: grid-shift 10s ease-in-out infinite; }
+        
+        .animate-shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s ease-in-out infinite;
+        }
+        
+        .animate-shimmer-overlay { animation: shimmer-overlay 3s ease-in-out infinite; }
+        
+        .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
+        .animate-subtle-bounce { animation: subtle-bounce 0.3s ease-in-out; }
+        .animate-subtle-zoom { animation: subtle-zoom 0.3s ease-in-out; }
+        
+        .animate-pulse-error { animation: pulse-error 1s ease-in-out infinite; }
         .animate-shake { animation: shake 0.5s ease-in-out; }
-        .animate-gradient { animation: gradient 3s ease infinite; }
         .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
         
+        /* Utility Classes */
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;

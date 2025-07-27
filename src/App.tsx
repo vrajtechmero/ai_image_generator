@@ -42,6 +42,7 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('');
   const [isStyleDropdownOpen, setIsStyleDropdownOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState('');
@@ -49,10 +50,41 @@ function App() {
   const [activeSection, setActiveSection] = useState('generator');
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     const handleVisibility = () => setIsVisible(true);
+    
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = 'en-US';
+      
+      recognitionInstance.onstart = () => {
+        setIsListening(true);
+      };
+      
+      recognitionInstance.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setPrompt(prev => prev + (prev ? ' ' : '') + transcript);
+      };
+      
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+      };
+      
+      recognitionInstance.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        setError('Voice recognition error. Please try again.');
+      };
+      
+      setRecognition(recognitionInstance);
+    }
     
     window.addEventListener('scroll', handleScroll);
     setTimeout(handleVisibility, 100);
@@ -152,6 +184,19 @@ function App() {
     setIsStyleDropdownOpen(false);
   };
 
+  const startVoiceRecognition = () => {
+    if (recognition && !isListening) {
+      setError('');
+      recognition.start();
+    }
+  };
+
+  const stopVoiceRecognition = () => {
+    if (recognition && isListening) {
+      recognition.stop();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden animate-gradient-shift">
       {/* Professional background elements */}
@@ -230,7 +275,7 @@ function App() {
                   <Wand2 className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-5xl font-bold text-white mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in-up animate-text-shimmer animate-scale-in">
+              <h1 className="text-5xl font-bold text-white mb-6 animate-fade-in-up animate-scale-in">
                 AI Image Generator
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-500 animate-typewriter">
@@ -247,15 +292,35 @@ function App() {
                     <Palette className="w-5 h-5" />
                     Describe Your Vision
                   </label>
-                  <textarea
-                    id="prompt"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="A serene mountain landscape at golden hour with misty valleys..."
-                    className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none h-32 backdrop-blur-sm hover:bg-white/10 focus:scale-[1.02] transform animate-border-pulse focus:animate-glow-blue hover:animate-subtle-bounce"
-                    disabled={isGenerating}
-                  />
+                  <div className="relative">
+                    <textarea
+                      id="prompt"
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="A serene mountain landscape at golden hour with misty valleys..."
+                      className="w-full p-4 pr-16 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none h-32 backdrop-blur-sm hover:bg-white/10 focus:scale-[1.02] transform animate-border-pulse focus:animate-glow-blue hover:animate-subtle-bounce"
+                      disabled={isGenerating}
+                    />
+                    <button
+                      onClick={isListening ? stopVoiceRecognition : startVoiceRecognition}
+                      disabled={isGenerating || !recognition}
+                      className={`absolute top-4 right-4 p-2 rounded-lg transition-all duration-300 transform hover:scale-110 ${
+                        isListening 
+                          ? 'bg-red-500/20 text-red-400 animate-pulse' 
+                          : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                      } ${!recognition ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title={isListening ? 'Stop voice input' : 'Start voice input'}
+                    >
+                      {isListening ? (
+                        <div className="w-5 h-5 bg-red-400 rounded-full animate-pulse"></div>
+                      ) : (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Style Selection */}
@@ -265,7 +330,7 @@ function App() {
                     Art Style (Optional)
                   </label>
                   
-                  <div className="relative">
+                  <div className={`relative ${isStyleDropdownOpen ? 'z-50' : 'z-10'}`}>
                     <button
                       onClick={() => setIsStyleDropdownOpen(!isStyleDropdownOpen)}
                       className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm transform hover:scale-[1.02] focus:scale-[1.02] animate-border-pulse hover:animate-subtle-bounce focus:animate-glow-blue"
@@ -291,9 +356,9 @@ function App() {
                     </button>
 
                     {isStyleDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in animate-border-glow">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in">
                         {styleCategories.map((category, categoryIndex) => (
-                          <div key={categoryIndex} className="p-4 border-b border-white/10 last:border-b-0 animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
+                          <div key={categoryIndex} className="p-4 border-b border-gray-700 last:border-b-0 animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
                             <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3 animate-slide-in-left">
                               {category.icon}
                               <span className="text-sm">{category.name}</span>
@@ -303,7 +368,7 @@ function App() {
                                 <button
                                   key={styleIndex}
                                   onClick={() => selectStyle(style)}
-                                  className="p-3 text-left text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm transform hover:scale-105 hover:translate-x-1 animate-fade-in hover:animate-glow-subtle animate-slide-in-right"
+                                  className="p-3 text-left text-white hover:bg-gray-700 rounded-lg transition-all duration-200 text-sm transform hover:scale-105 hover:translate-x-1 animate-fade-in hover:animate-glow-subtle animate-slide-in-right"
                                   style={{ animationDelay: `${(categoryIndex * 10 + styleIndex) * 50}ms` }}
                                 >
                                   {style}
@@ -356,7 +421,7 @@ function App() {
               </div>
 
               {/* Generated Images Gallery */}
-              {generatedImages.length > 0 && (
+              {generatedImages.length > 0 && !isStyleDropdownOpen && (
                 <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-up animation-delay-500 animate-border-glow hover:animate-float-gentle">
                   <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 animate-fade-in-up animate-text-shimmer">
                     <Award className="w-6 h-6 text-blue-400" />
@@ -415,7 +480,7 @@ function App() {
               )}
 
               {/* Empty State */}
-              {generatedImages.length === 0 && !isGenerating && (
+              {generatedImages.length === 0 && !isGenerating && !isStyleDropdownOpen && (
                 <div className="text-center py-16 animate-fade-in animate-scale-in">
                   <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 border border-white/10 backdrop-blur-sm animate-bounce hover:animate-spin transition-all duration-500 animate-glow animate-morph">
                     <Sparkles className="w-12 h-12 text-blue-400 animate-pulse animate-rotate-slow" />
@@ -511,6 +576,14 @@ function App() {
                     <div>
                       <h3 className="text-white font-semibold">Modern UI/UX</h3>
                       <p className="text-gray-300 text-sm">Modern, responsive design with smooth animations</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 animate-slide-in-right animation-delay-650">
+                    <Star className="w-5 h-5 text-yellow-400 mt-0.5" />
+                    <div>
+                      <h3 className="text-white font-semibold">Voice Input</h3>
+                      <p className="text-gray-300 text-sm">Speak your prompts with accurate voice recognition</p>
                     </div>
                   </div>
                   

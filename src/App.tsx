@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import React, { useState, useEffect } from 'react';
 import { Download, Sparkles, RefreshCw, Copy, Zap, Palette, Wand2, Camera, Brush, Brain, Globe, ChevronDown, X, User, Mail, Star, Award, Layers, Code } from 'lucide-react';
 

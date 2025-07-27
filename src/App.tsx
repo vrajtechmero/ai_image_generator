@@ -51,6 +51,8 @@ function App() {
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -196,6 +198,54 @@ function App() {
       recognition.stop();
     }
   };
+
+  // Save project functionality
+  const saveProject = () => {
+    setIsSaving(true);
+    setSaveMessage('');
+    
+    try {
+      const projectData = {
+        prompt,
+        selectedStyle,
+        generatedImages,
+        timestamp: Date.now(),
+        version: '1.0'
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('ai-studio-project', JSON.stringify(projectData));
+      
+      // Simulate save delay for better UX
+      setTimeout(() => {
+        setIsSaving(false);
+        setSaveMessage('Project saved successfully!');
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => setSaveMessage(''), 3000);
+      }, 1000);
+      
+    } catch (error) {
+      setIsSaving(false);
+      setSaveMessage('Failed to save project. Please try again.');
+      setTimeout(() => setSaveMessage(''), 3000);
+    }
+  };
+
+  // Load project on component mount
+  useEffect(() => {
+    try {
+      const savedProject = localStorage.getItem('ai-studio-project');
+      if (savedProject) {
+        const projectData = JSON.parse(savedProject);
+        setPrompt(projectData.prompt || '');
+        setSelectedStyle(projectData.selectedStyle || '');
+        setGeneratedImages(projectData.generatedImages || []);
+      }
+    } catch (error) {
+      console.error('Failed to load saved project:', error);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden animate-gradient-shift">
@@ -355,8 +405,10 @@ function App() {
                       </div>
                     </button>
 
+                    {/* Dropdown with improved positioning and scrolling support */}
                     {isStyleDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in"
+                           style={{ position: 'absolute' }}>
                         {styleCategories.map((category, categoryIndex) => (
                           <div key={categoryIndex} className="p-4 border-b border-gray-700 last:border-b-0 animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
                             <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3 animate-slide-in-left">
@@ -406,6 +458,25 @@ function App() {
                       </>
                     )}
                   </button>
+                  <button
+                    onClick={saveProject}
+                    disabled={isSaving}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg font-medium transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:bg-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed animate-slide-in-right animation-delay-400"
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-green-300/30 border-t-green-300 rounded-full animate-spin"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        Save
+                      </>
+                    )}
+                  </button>
 
                   {currentImageIndex !== null && (
                     <button
@@ -421,7 +492,7 @@ function App() {
               </div>
 
               {/* Generated Images Gallery */}
-              {generatedImages.length > 0 && !isStyleDropdownOpen && (
+              {generatedImages.length > 0 && (
                 <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-up animation-delay-500 animate-border-glow hover:animate-float-gentle">
                   <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 animate-fade-in-up animate-text-shimmer">
                     <Award className="w-6 h-6 text-blue-400" />
@@ -480,7 +551,7 @@ function App() {
               )}
 
               {/* Empty State */}
-              {generatedImages.length === 0 && !isGenerating && !isStyleDropdownOpen && (
+              {generatedImages.length === 0 && !isGenerating && (
                 <div className="text-center py-16 animate-fade-in animate-scale-in">
                   <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 border border-white/10 backdrop-blur-sm animate-bounce hover:animate-spin transition-all duration-500 animate-glow animate-morph">
                     <Sparkles className="w-12 h-12 text-blue-400 animate-pulse animate-rotate-slow" />
@@ -596,6 +667,15 @@ function App() {
                   </div>
                 </div>
               </div>
+              
+              {/* Save Message */}
+              {saveMessage && (
+                <div className={`mt-2 text-center text-sm font-medium animate-fade-in ${
+                  saveMessage.includes('successfully') ? 'text-green-300' : 'text-red-300'
+                }`}>
+                  {saveMessage}
+                </div>
+              )}
             </div>
 
             {/* Technology Stack */}

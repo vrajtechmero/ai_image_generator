@@ -240,6 +240,18 @@ function App() {
       if (savedProject) {
         const projectData = JSON.parse(savedProject);
         setPrompt(projectData.prompt || '');
+        setSelectedStyle(projectData.selectedStyle || '');
+        setGeneratedImages(projectData.generatedImages || []);
+      }
+    } catch (error) {
+      console.error('Failed to load saved project:', error);
+    }
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 z-0">
         {/* Only show background animations when dropdown is closed */}
         {!isStyleDropdownOpen && (
           <>
@@ -386,7 +398,7 @@ function App() {
                     Art Style (Optional)
                   </label>
                   
-                  <div className={`relative ${isStyleDropdownOpen ? 'z-50' : 'z-10'}`}>
+                  <div className="relative" style={{ zIndex: isStyleDropdownOpen ? 1000 : 'auto' }}>
                     <button
                       onClick={() => setIsStyleDropdownOpen(!isStyleDropdownOpen)}
                       className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm transform hover:scale-[1.02] focus:scale-[1.02] animate-border-pulse hover:animate-subtle-bounce focus:animate-glow-blue"
@@ -413,8 +425,15 @@ function App() {
 
                     {/* Dropdown with improved positioning and scrolling support */}
                     {isStyleDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in"
-                           style={{ position: 'absolute' }}>
+                      <div 
+                        ref={setDropdownRef}
+                        className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in"
+                        style={{ 
+                          position: 'absolute',
+                          zIndex: 1001,
+                          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
+                        }}
+                      >
                         {styleCategories.map((category, categoryIndex) => (
                           <div key={categoryIndex} className="p-4 border-b border-gray-700 last:border-b-0 animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
                             <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3 animate-slide-in-left">

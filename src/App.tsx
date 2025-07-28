@@ -45,6 +45,7 @@ function App() {
   const [isListening, setIsListening] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [copyStatus, setCopyStatus] = useState<{[key: string]: 'idle' | 'copying' | 'success' | 'error'}>({});
   const [dropdownRef, setDropdownRef] = useState<HTMLDivElement | null>(null);
   const [error, setError] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);

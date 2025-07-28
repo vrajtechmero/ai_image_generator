@@ -163,40 +163,6 @@ function App() {
     }
   };
 
-  const copyImageToClipboard = async (imageUrl: string, imageId: string) => {
-    setCopyStatus(prev => ({ ...prev, [imageId]: 'copying' }));
-    
-    try {
-      // Method 1: Try to copy image as blob (modern browsers)
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      
-      if (navigator.clipboard && window.ClipboardItem) {
-        const item = new ClipboardItem({ [blob.type]: blob });
-        await navigator.clipboard.write([item]);
-        setCopyStatus(prev => ({ ...prev, [imageId]: 'success' }));
-      } else {
-        // Method 2: Fallback - copy image URL to clipboard
-        await navigator.clipboard.writeText(imageUrl);
-        setCopyStatus(prev => ({ ...prev, [imageId]: 'success' }));
-      }
-      
-      // Reset status after 2 seconds
-      setTimeout(() => {
-        setCopyStatus(prev => ({ ...prev, [imageId]: 'idle' }));
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Failed to copy image:', error);
-      setCopyStatus(prev => ({ ...prev, [imageId]: 'error' }));
-      
-      // Reset status after 2 seconds
-      setTimeout(() => {
-        setCopyStatus(prev => ({ ...prev, [imageId]: 'idle' }));
-      }, 2000);
-    }
-  };
-
   const downloadImage = async (imageUrl: string, prompt: string, style: string) => {
     window.open(imageUrl, '_blank');
   };

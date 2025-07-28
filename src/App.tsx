@@ -19,7 +19,7 @@ const styleCategories: StyleCategory[] = [
   {
     name: "🎨 Artistic / Illustration",
     icon: <Brush className="w-4 h-4" />,
-    styles: ["Cartoon", "Anime", "3D Render", "Digital Painting", "Sketch / Line Art", "Pixel Art", "Watercolor", "Oil Painting", "Low Poly", "Fantasy Art"]
+    styles: ["Cartoon", "Anime", "3D Render", "Digital Painting", "Sketch / Line Art", "Pixel Art", "Watercolor", "Oil Painting", "Low Poly", "Fantasy Art", "Logo"]
   },
   {
     name: "📷 Photography / Vintage",

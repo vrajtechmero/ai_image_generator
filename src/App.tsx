@@ -250,7 +250,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden">
-      {/* Animated Background */}
+      {/* Background Effects */}
       <div className="absolute inset-0 z-0">
         {/* Only show background animations when dropdown is closed */}
         {!isStyleDropdownOpen && (
@@ -398,7 +398,7 @@ function App() {
                     Art Style (Optional)
                   </label>
                   
-                  <div className="relative" style={{ zIndex: isStyleDropdownOpen ? 1000 : 'auto' }}>
+                  <div className={`relative ${isStyleDropdownOpen ? 'z-50' : 'z-10'}`}>
                     <button
                       onClick={() => setIsStyleDropdownOpen(!isStyleDropdownOpen)}
                       className="w-full p-4 bg-white/5 border border-white/20 rounded-xl text-white text-left flex items-center justify-between hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 backdrop-blur-sm transform hover:scale-[1.02] focus:scale-[1.02] animate-border-pulse hover:animate-subtle-bounce focus:animate-glow-blue"
@@ -425,15 +425,8 @@ function App() {
 
                     {/* Dropdown with improved positioning and scrolling support */}
                     {isStyleDropdownOpen && (
-                      <div 
-                        ref={setDropdownRef}
-                        className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in"
-                        style={{ 
-                          position: 'absolute',
-                          zIndex: 1001,
-                          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
-                        }}
-                      >
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-slide-down animate-scale-in"
+                           style={{ position: 'absolute' }}>
                         {styleCategories.map((category, categoryIndex) => (
                           <div key={categoryIndex} className="p-4 border-b border-gray-700 last:border-b-0 animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
                             <div className="flex items-center gap-2 text-gray-300 font-semibold mb-3 animate-slide-in-left">
@@ -518,59 +511,67 @@ function App() {
 
               {/* Generated Images Gallery */}
               {generatedImages.length > 0 && (
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-up animation-delay-500 animate-border-glow hover:animate-float-gentle">
-                  <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 animate-fade-in-up animate-text-shimmer">
-                    <Award className="w-6 h-6 text-blue-400" />
-                    Generated Images
-                  </h2>
+                <div 
+                  className="animate-fade-in-up transition-all duration-300 ease-in-out"
+                  style={{ 
+                    marginTop: isStyleDropdownOpen ? '320px' : '0px',
+                    transform: isStyleDropdownOpen ? 'translateY(20px)' : 'translateY(0px)'
+                  }}
+                >
+                  <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl animate-slide-up animation-delay-500 animate-border-glow hover:animate-float-gentle">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 animate-fade-in-up animate-text-shimmer">
+                      <Award className="w-6 h-6 text-blue-400" />
+                      Generated Images
+                    </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {generatedImages.map((image, index) => (
-                      <div
-                        key={image.id}
-                        className="group relative bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl animate-fade-in animate-scale-in hover:animate-glow-subtle animate-border-pulse"
-                        style={{ animationDelay: `${index * 200}ms` }}
-                      >
-                        <div className="aspect-square relative overflow-hidden animate-shimmer">
-                          <img
-                            src={image.url}
-                            alt={image.prompt}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1 animate-fade-in hover:animate-subtle-zoom"
-                            onClick={() => setCurrentImageIndex(index)}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 animate-gradient animate-shimmer-overlay"></div>
-                          
-                          {/* Style badge */}
-                          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium transform group-hover:scale-110 transition-transform duration-300 animate-fade-in animate-slide-in-left animate-glow-subtle">
-                            {image.style}
-                          </div>
-                        </div>
-
-                        <div className="p-4 animate-slide-in-up animation-delay-300">
-                          <p className="text-sm text-gray-300 mb-4 line-clamp-2 leading-relaxed animate-fade-in animation-delay-400">
-                            {image.prompt}
-                          </p>
-                          
-                          <div className="flex items-center justify-between gap-3">
-                            <button
-                              onClick={() => copyPrompt(image.prompt)}
-                              className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition-all duration-300 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-1 animate-slide-in-left animation-delay-500 hover:animate-bounce-gentle animate-border-pulse"
-                            >
-                              <Copy className="w-4 h-4 animate-pulse" />
-                              Copy
-                            </button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {generatedImages.map((image, index) => (
+                        <div
+                          key={image.id}
+                          className="group relative bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl animate-fade-in animate-scale-in hover:animate-glow-subtle animate-border-pulse"
+                          style={{ animationDelay: `${index * 200}ms` }}
+                        >
+                          <div className="aspect-square relative overflow-hidden animate-shimmer">
+                            <img
+                              src={image.url}
+                              alt={image.prompt}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1 animate-fade-in hover:animate-subtle-zoom"
+                              onClick={() => setCurrentImageIndex(index)}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 animate-gradient animate-shimmer-overlay"></div>
                             
-                            <button
-                              onClick={() => downloadImage(image.url, image.prompt, image.style)}
-                              className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:shadow-lg transform hover:scale-105 transition-all duration-300 hover:-translate-y-1 hover:rotate-3 animate-slide-in-right animation-delay-500 hover:animate-bounce-gentle animate-glow animate-gradient-shift"
-                            >
-                              <Download className="w-4 h-4 animate-pulse" />
-                              Download
-                            </button>
+                            {/* Style badge */}
+                            <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium transform group-hover:scale-110 transition-transform duration-300 animate-fade-in animate-slide-in-left animate-glow-subtle">
+                              {image.style}
+                            </div>
+                          </div>
+
+                          <div className="p-4 animate-slide-in-up animation-delay-300">
+                            <p className="text-sm text-gray-300 mb-4 line-clamp-2 leading-relaxed animate-fade-in animation-delay-400">
+                              {image.prompt}
+                            </p>
+                            
+                            <div className="flex items-center justify-between gap-3">
+                              <button
+                                onClick={() => copyPrompt(image.prompt)}
+                                className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition-all duration-300 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-1 animate-slide-in-left animation-delay-500 hover:animate-bounce-gentle animate-border-pulse"
+                              >
+                                <Copy className="w-4 h-4 animate-pulse" />
+                                Copy
+                              </button>
+                              
+                              <button
+                                onClick={() => downloadImage(image.url, image.prompt, image.style)}
+                                className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:shadow-lg transform hover:scale-105 transition-all duration-300 hover:-translate-y-1 hover:rotate-3 animate-slide-in-right animation-delay-500 hover:animate-bounce-gentle animate-glow animate-gradient-shift"
+                              >
+                                <Download className="w-4 h-4 animate-pulse" />
+                                Download
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}

@@ -45,6 +45,7 @@ function App() {
   const [isListening, setIsListening] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [dropdownRef, setDropdownRef] = useState<HTMLDivElement | null>(null);
   const [error, setError] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState('generator');
@@ -239,38 +240,43 @@ function App() {
       if (savedProject) {
         const projectData = JSON.parse(savedProject);
         setPrompt(projectData.prompt || '');
-        setSelectedStyle(projectData.selectedStyle || '');
-        setGeneratedImages(projectData.generatedImages || []);
-      }
-    } catch (error) {
-      console.error('Failed to load saved project:', error);
-    }
-  }, []);
+        {/* Only show background animations when dropdown is closed */}
+        {!isStyleDropdownOpen && (
+          <>
+            {/* Floating orbs with parallax */}
+            <div 
+              className="absolute w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float"
+              style={{
+                transform: `translateY(${scrollY * 0.5}px)`,
+                top: '10%',
+                left: '10%'
+              }}
+            ></div>
+            <div 
+              className="absolute w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-float-delayed"
+              style={{
+                transform: `translateY(${scrollY * 0.3}px)`,
+                top: '60%',
+                right: '10%'
+              }}
+            ></div>
+            <div 
+              className="absolute w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-float-slow"
+              style={{
+                transform: `translateY(${scrollY * 0.7}px)`,
+                top: '40%',
+                left: '70%'
+              }}
+            ></div>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden animate-gradient-shift">
-      {/* Professional background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div 
-          className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animate-float animate-morph"
-          style={{ transform: `translateY(${scrollY * 0.1}px) rotate(${scrollY * 0.05}deg)` }}
-        ></div>
-        <div 
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000 animate-float-delayed animate-morph-delayed"
-          style={{ transform: `translateY(${scrollY * -0.15}px) rotate(${scrollY * -0.03}deg)` }}
-        ></div>
-        <div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-600/20 to-blue-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000 animate-float-slow animate-morph-slow"
-          style={{ transform: `translate(-50%, -50%) translateY(${scrollY * 0.08}px) scale(${1 + scrollY * 0.0001})` }}
-        ></div>
-        
-        {/* Animated particles */}
-        <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-blue-400/60 rounded-full animate-ping animation-delay-1000 animate-drift"></div>
-        <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-purple-400/60 rounded-full animate-ping animation-delay-3000 animate-drift-reverse"></div>
-        <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-pink-400/60 rounded-full animate-ping animation-delay-5000 animate-drift-slow"></div>
-        <div className="absolute bottom-1/4 left-2/3 w-2 h-2 bg-cyan-400/60 rounded-full animate-ping animation-delay-7000 animate-drift-fast"></div>
-        <div className="absolute top-1/6 right-1/4 w-1 h-1 bg-yellow-400/60 rounded-full animate-ping animation-delay-2000 animate-drift-diagonal"></div>
-        <div className="absolute bottom-1/3 right-1/6 w-2 h-2 bg-green-400/60 rounded-full animate-ping animation-delay-6000 animate-drift-circular"></div>
+            {/* Animated particles */}
+            <div className="absolute top-20 left-20 w-2 h-2 bg-blue-400/30 rounded-full animate-ping"></div>
+            <div className="absolute top-40 right-32 w-1 h-1 bg-purple-400/40 rounded-full animate-pulse"></div>
+            <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-pink-400/30 rounded-full animate-bounce"></div>
+            <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-cyan-400/40 rounded-full animate-ping"></div>
+            <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-indigo-400/30 rounded-full animate-pulse"></div>
+          </>
+        )}
         
         {/* Grid pattern overlay */}
         <div 

@@ -103,7 +103,7 @@ function App() {
   const generateImage = async () => {
     if (!prompt.trim()) {
       setError('Please enter a prompt for image generation');
-      return;
+    const webhookUrl = 'https://n8n-latest-ug73.onrender.com/webhook/7aaaa7bd-25a4-4ad6-ba32-6f9ec0832852';
     }
 
     setIsGenerating(true);

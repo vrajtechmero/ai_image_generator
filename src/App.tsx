@@ -121,6 +121,10 @@ function App() {
         },
         body: JSON.stringify({
           chatInput: finalPrompt
+          body: {
+            chatInput: finalPrompt
+          },
+          prompt: finalPrompt,
         }),
       });
 

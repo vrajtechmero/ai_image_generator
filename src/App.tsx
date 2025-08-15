@@ -113,13 +113,14 @@ function App() {
       const finalPrompt = selectedStyle 
         ? `${prompt.trim()}, ${selectedStyle} style`
         : prompt.trim();
-          chatInput: `${prompt}${selectedStyle ? ` in ${selectedStyle} style` : ''}`,
+
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          chatInput: `${prompt}${selectedStyle ? ` in ${selectedStyle} style` : ''}`,
           "chatInput": finalPrompt
         }),
       });

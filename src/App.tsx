@@ -113,7 +113,7 @@ function App() {
       const finalPrompt = selectedStyle 
         ? `${prompt.trim()}, ${selectedStyle} style`
         : prompt.trim();
-
+          chatInput: `${prompt}${selectedStyle ? ` in ${selectedStyle} style` : ''}`,
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -144,7 +144,7 @@ function App() {
         setGeneratedImages(prev => [newImage, ...prev]);
         setCurrentImageIndex(0);
       } else {
-        throw new Error('No image URL received from the API. Response: ' + JSON.stringify(data));
+        setError(data.message || data.error || 'Failed to generate image');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate image');

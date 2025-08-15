@@ -120,8 +120,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chatInput: `${prompt}${selectedStyle ? ` in ${selectedStyle} style` : ''}`,
-          "chatInput": finalPrompt
+          chatInput: finalPrompt
         }),
       });
 

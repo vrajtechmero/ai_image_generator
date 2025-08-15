@@ -120,7 +120,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chatInput: finalPrompt
+          chatInput: finalPrompt,
           body: {
             chatInput: finalPrompt
           },

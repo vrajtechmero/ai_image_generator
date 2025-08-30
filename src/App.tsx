@@ -355,7 +355,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="mt-2 flex items-center text-xs text-purple-300">
                   <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mr-2 animate-pulse"></div>
-                  💡 Tip: Use "WITH TEXT [your text here]" to add text overlays or click the mic to speak your prompt
+                  💡 Tip: Use "WITH TEXT [your text here]\" to add text overlays or click the mic to speak your prompt
                 </div>
                 {isListening && (
                   <div className="mt-2 flex items-center text-xs text-red-300 animate-pulse">

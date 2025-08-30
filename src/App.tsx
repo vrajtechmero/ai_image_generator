@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageIcon, Wand2, Download, Eye, Settings, Palette, Sparkles } from 'lucide-react';
+import { ImageIcon, Wand2, Download, Eye, Settings, Palette, Sparkles, Share2, FileText, Copy, Check } from 'lucide-react';
 
 interface ImageGenerationParams {
   prompt: string;
@@ -9,6 +9,11 @@ interface ImageGenerationParams {
   style: string;
 }
 
+interface SocialMediaContent {
+  platform: string;
+  caption: string;
+  hashtags: string[];
+}
 const App: React.FC = () => {
   const [params, setParams] = useState<ImageGenerationParams>({
     prompt: '',
@@ -22,6 +27,9 @@ const App: React.FC = () => {
   const [showJsonPreview, setShowJsonPreview] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
+  const [socialContent, setSocialContent] = useState<SocialMediaContent[]>([]);
+  const [isGeneratingSocial, setIsGeneratingSocial] = useState(false);
+  const [copiedContent, setCopiedContent] = useState<string>('');
 
   const modelOptions = [
     { value: 'img4', label: 'IMG4', description: 'Latest model with superior detail and accuracy' },
@@ -56,7 +64,19 @@ const App: React.FC = () => {
     { value: 'surreal', label: 'Surreal', description: 'Dreamlike and abstract', emoji: '🌀' },
     { value: 'noir', label: 'Film Noir', description: 'Black and white dramatic', emoji: '🎬' },
     { value: 'steampunk', label: 'Steampunk', description: 'Victorian-era technology', emoji: '⚙️' },
-    { value: 'gothic', label: 'Gothic', description: 'Dark medieval architecture', emoji: '🏰' }
+    { value: 'gothic', label: 'Gothic', description: 'Dark medieval architecture', emoji: '🏰' },
+    { value: 'art-deco', label: 'Art Deco', description: 'Geometric luxury design', emoji: '💎' },
+    { value: 'graffiti', label: 'Graffiti', description: 'Urban street art style', emoji: '🎯' },
+    { value: 'pixel-art', label: 'Pixel Art', description: '8-bit retro gaming style', emoji: '🕹️' },
+    { value: 'neon', label: 'Neon', description: 'Bright glowing effects', emoji: '⚡' },
+    { value: 'pastel', label: 'Pastel', description: 'Soft dreamy colors', emoji: '🌈' },
+    { value: 'monochrome', label: 'Monochrome', description: 'Single color variations', emoji: '⚫' },
+    { value: 'comic-book', label: 'Comic Book', description: 'Bold comic illustration', emoji: '💥' },
+    { value: 'renaissance', label: 'Renaissance', description: 'Classical European art', emoji: '🏛️' },
+    { value: 'abstract', label: 'Abstract', description: 'Non-representational art', emoji: '🎭' },
+    { value: 'photojournalism', label: 'Photojournalism', description: 'Documentary photography', emoji: '📰' },
+    { value: 'fashion', label: 'Fashion', description: 'High-end fashion photography', emoji: '👗' },
+    { value: 'architectural', label: 'Architectural', description: 'Building and structure focus', emoji: '🏗️' }
   ];
 
   const samplePrompts = [
@@ -165,7 +185,7 @@ const App: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `ai-generated-image-${index + 1}.png`;
+      link.download = `ai-generated-${params.style}-${Date.now()}-${index + 1}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -175,6 +195,71 @@ const App: React.FC = () => {
     }
   };
 
+  const generateSocialContent = async () => {
+    if (!params.prompt.trim()) {
+      setError('Please enter a prompt first');
+      return;
+    }
+
+    setIsGeneratingSocial(true);
+    setError('');
+
+    try {
+      // Generate content for different platforms
+      const platforms = ['LinkedIn', 'Instagram', 'Facebook'];
+      const content: SocialMediaContent[] = [];
+
+      for (const platform of platforms) {
+        let caption = '';
+        let hashtags: string[] = [];
+
+        switch (platform) {
+          case 'LinkedIn':
+            caption = `🚀 Excited to share this AI-generated artwork! Created using advanced AI technology with the prompt: "${params.prompt}". The intersection of creativity and artificial intelligence continues to amaze me. What do you think about AI's role in creative industries?`;
+            hashtags = ['#AIArt', '#ArtificialIntelligence', '#DigitalArt', '#Innovation', '#Technology', '#Creativity', '#AIGenerated', '#FutureOfArt'];
+            break;
+          case 'Instagram':
+            caption = `✨ AI magic at work! This stunning piece was created with just a few words: "${params.prompt}". Swipe to see the creative process! 🎨`;
+            hashtags = ['#AIArt', '#DigitalArt', '#AIGenerated', '#ArtificialIntelligence', '#CreativeAI', '#TechArt', '#Innovation', '#DigitalCreativity', '#AIArtist', '#FutureArt', '#MachineLearning', '#GenerativeAI'];
+            break;
+          case 'Facebook':
+            caption = `🎨 Check out this incredible AI-generated artwork! I used the prompt "${params.prompt}" and the results are absolutely stunning. It's amazing how technology can bring our imagination to life. What would you create with AI?`;
+            hashtags = ['#AIArt', '#ArtificialIntelligence', '#DigitalArt', '#Technology', '#Innovation', '#CreativeAI', '#AIGenerated'];
+            break;
+        }
+
+        content.push({ platform, caption, hashtags });
+      }
+
+      setSocialContent(content);
+    } catch (err) {
+      setError('Failed to generate social media content');
+    } finally {
+      setIsGeneratingSocial(false);
+    }
+  };
+
+  const copyToClipboard = async (text: string, platform: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedContent(platform);
+      setTimeout(() => setCopiedContent(''), 2000);
+    } catch (err) {
+      setError('Failed to copy to clipboard');
+    }
+  };
+
+  const downloadAllImages = async () => {
+    if (generatedImages.length === 0) return;
+
+    for (let i = 0; i < generatedImages.length; i++) {
+      await downloadImage(generatedImages[i], i);
+      // Add small delay between downloads
+      if (i < generatedImages.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 relative overflow-hidden">
       {/* Animated Background Elements */}
@@ -491,11 +576,114 @@ const App: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                
+                {/* Download All Button */}
+                {generatedImages.length > 1 && (
+                  <div className="text-center mt-6">
+                    <button
+                      onClick={downloadAllImages}
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 flex items-center space-x-2 mx-auto shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <Download className="w-5 h-5" />
+                      <span>Download All Images</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
 
+        {/* Social Media Content Generation */}
+        {generatedImages.length > 0 && (
+          <div className="max-w-6xl mx-auto mt-8">
+            <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-500 animate-slide-up">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center">
+                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-2 rounded-lg mr-3">
+                    <Share2 className="w-6 h-6 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-white">Social Media Content</h2>
+                </div>
+                <button
+                  onClick={generateSocialContent}
+                  disabled={isGeneratingSocial}
+                  className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50"
+                >
+                  {isGeneratingSocial ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4" />
+                      <span>Generate Content</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {socialContent.length === 0 && !isGeneratingSocial && (
+                <div className="flex flex-col items-center justify-center h-48 text-purple-200 animate-fade-in">
+                  <Share2 className="w-16 h-16 mb-4 opacity-50" />
+                  <p className="text-lg font-semibold mb-2">Ready to Share</p>
+                  <p className="text-sm text-center max-w-xs">Generate optimized captions and hashtags for your social media posts</p>
+                </div>
+              )}
+
+              {socialContent.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {socialContent.map((content, index) => (
+                    <div key={content.platform} className="bg-white/5 rounded-2xl p-6 border border-white/20 hover:bg-white/10 transition-all duration-300 animate-scale-in" style={{animationDelay: `${index * 150}ms`}}>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-white flex items-center">
+                          {content.platform === 'LinkedIn' && <div className="w-3 h-3 bg-blue-600 rounded mr-2"></div>}
+                          {content.platform === 'Instagram' && <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded mr-2"></div>}
+                          {content.platform === 'Facebook' && <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>}
+                          {content.platform}
+                        </h3>
+                        <button
+                          onClick={() => copyToClipboard(`${content.caption}\n\n${content.hashtags.join(' ')}`, content.platform)}
+                          className="text-purple-300 hover:text-white transition-colors duration-200 p-2 rounded-lg hover:bg-white/10"
+                        >
+                          {copiedContent === content.platform ? (
+                            <Check className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-purple-300 mb-2">Caption</label>
+                          <p className="text-sm text-purple-100 leading-relaxed bg-black/20 p-3 rounded-lg">
+                            {content.caption}
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs font-semibold text-purple-300 mb-2">Hashtags</label>
+                          <div className="flex flex-wrap gap-1">
+                            {content.hashtags.map((tag, tagIndex) => (
+                              <span
+                                key={tagIndex}
+                                className="text-xs bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-purple-200 px-2 py-1 rounded-full border border-purple-400/30"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         {/* Footer */}
         <div className="text-center mt-16 text-purple-300 text-sm animate-fade-in animation-delay-1000">
           <div className="flex items-center justify-center space-x-2 mb-2">

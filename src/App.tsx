@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageIcon, Wand2, Download, Eye, Settings, Palette, Sparkles, Share2, FileText, Copy, Check } from 'lucide-react';
+import { ImageIcon, Wand2, Download, Eye, Settings, Palette, Sparkles, Mic, MicOff } from 'lucide-react';
 
 interface ImageGenerationParams {
   prompt: string;
@@ -22,6 +22,8 @@ const App: React.FC = () => {
   const [showJsonPreview, setShowJsonPreview] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
 
   const modelOptions = [
     { value: 'img4', label: 'IMG4', description: 'Latest model with superior detail and accuracy' },
@@ -70,6 +72,53 @@ const App: React.FC = () => {
     { value: 'fashion', label: 'Fashion', description: 'High-end fashion photography', emoji: '👗' },
     { value: 'architectural', label: 'Architectural', description: 'Building and structure focus', emoji: '🏗️' }
   ];
+
+  // Initialize speech recognition
+  React.useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognitionInstance = new SpeechRecognition();
+      
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = 'en-US';
+      
+      recognitionInstance.onstart = () => {
+        setIsListening(true);
+        setError('');
+      };
+      
+      recognitionInstance.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setParams(prev => ({ ...prev, prompt: transcript }));
+        setIsListening(false);
+      };
+      
+      recognitionInstance.onerror = (event) => {
+        setError(`Voice recognition error: ${event.error}`);
+        setIsListening(false);
+      };
+      
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+      };
+      
+      setRecognition(recognitionInstance);
+    }
+  }, []);
+
+  const startVoiceRecognition = () => {
+    if (!recognition) {
+      setError('Voice recognition is not supported in your browser');
+      return;
+    }
+    
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  };
 
   const samplePrompts = [
     "A majestic mountain landscape at sunset with golden light",
@@ -280,15 +329,46 @@ const App: React.FC = () => {
                 <label className="block text-sm font-semibold text-purple-200 mb-3 group-hover:text-white transition-colors duration-200">
                   ✨ Image Description
                 </label>
-                <textarea
-                  value={params.prompt}
-                  onChange={(e) => handleInputChange('prompt', e.target.value)}
-                  placeholder="Describe your image in detail (e.g., 'Futuristic cyberpunk city at night with neon lights')"
-                  className="w-full h-36 px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none transition-all duration-300 hover:bg-white/15 focus:bg-white/20"
-                />
+                <div className="relative">
+                  <textarea
+                    value={params.prompt}
+                    onChange={(e) => handleInputChange('prompt', e.target.value)}
+                    placeholder="Describe your image in detail (e.g., 'Futuristic cyberpunk city at night with neon lights') or click the mic to speak"
+                    className="w-full h-36 px-6 py-4 pr-16 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none transition-all duration-300 hover:bg-white/15 focus:bg-white/20"
+                  />
+                  <button
+                    onClick={startVoiceRecognition}
+                    disabled={!recognition}
+                    className={`absolute top-4 right-4 p-3 rounded-lg transition-all duration-300 transform hover:scale-110 ${
+                      isListening 
+                        ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
+                        : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+                    } ${!recognition ? 'opacity-50 cursor-not-allowed' : 'shadow-lg hover:shadow-xl'}`}
+                    title={isListening ? 'Stop recording' : 'Start voice input'}
+                  >
+                    {isListening ? (
+                      <MicOff className="w-5 h-5 text-white" />
+                    ) : (
+                      <Mic className="w-5 h-5 text-white" />
+                    )}
+                  </button>
+                </div>
                 <div className="mt-2 flex items-center text-xs text-purple-300">
                   <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mr-2 animate-pulse"></div>
-                  💡 Tip: Use "WITH TEXT [your text here]\" to add text overlays
+                  💡 Tip: Use "WITH TEXT [your text here]" to add text overlays or click the mic to speak your prompt
+                </div>
+                {isListening && (
+                  <div className="mt-2 flex items-center text-xs text-red-300 animate-pulse">
+                    <div className="w-2 h-2 bg-red-400 rounded-full mr-2 animate-ping"></div>
+                    🎤 Listening... Speak your prompt now
+                  </div>
+                )}
+                {!recognition && (
+                  <div className="mt-2 flex items-center text-xs text-yellow-300">
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                    ⚠️ Voice input not supported in this browser
+                  </div>
+                )}
                 </div>
               </div>
 
